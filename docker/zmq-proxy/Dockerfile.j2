@@ -1,0 +1,9 @@
+FROM {{ image_spec("openstack-base") }}
+MAINTAINER {{ maintainer }}
+
+COPY zmq_sudoers /etc/sudoers.d/zmq_sudoers
+RUN chmod 750 /etc/sudoers.d && \
+    chmod 440 /etc/sudoers.d/zmq_sudoers && \
+    useradd zmq -G microservices -s /bin/false
+    
+USER zmq
