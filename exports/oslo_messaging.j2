@@ -1,0 +1,28 @@
+{% macro zmq(cfg_type) %}
+
+{% if cfg_type == 'rpc_config' -%}
+  [DEFAULT]
+{%- elif cfg_type == 'notifications_config' -%}
+  [oslo_messaging_notifications]
+{%- endif %}
+transport_url=zmq://
+
+[oslo_messaging_zmq]
+rpc_zmq_host={{ network_topology["private"]["address"] }}
+use_router_proxy=true
+rpc_use_acks=true
+
+{% if zeromq.matchmaker == 'redis' %}
+[oslo_messaging_zmq]
+rpc_zmq_matchmaker=redis
+
+[matchmaker_redis]
+password={{ redis.password }}
+
+{% if redis.deployment == 'single' %}
+host={{ address('redis') }}
+port={{ redis.ports.server.cont }}
+{% endif %}
+
+{% endif %}
+{% endmacro %}

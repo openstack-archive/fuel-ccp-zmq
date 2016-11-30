@@ -1,0 +1,27 @@
+configs:
+  messaging:
+    dependencies:
+      zmq: zmq-proxy
+  zeromq:
+    matchmaker: redis
+    proxy:
+      ports:
+        frontend:
+          cont: 50001
+        backend:
+          cont: 50002
+        publisher:
+          cont: 50003
+  redis:
+    deployment: single
+    ports:
+      server:
+        cont: 6379
+    password: password
+
+url:
+  redis:
+    debian:
+      repo: http://ftp.debian.org/debian
+      keyserver: keyserver.ubuntu.com
+      keys: "7638D0442B90D010 8B48AD6246925553"

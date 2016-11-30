@@ -1,0 +1,15 @@
+FROM {{ image_spec("base-tools") }}
+MAINTAINER {{ maintainer }}
+
+COPY redis_sudoers /etc/sudoers.d/redis_sudoers
+COPY {{ render('sources.list.debian.j2') }} /etc/apt/sources.list.d/redis.list
+
+RUN chmod 750 /etc/sudoers.d \
+    && chmod 440 /etc/sudoers.d/redis_sudoers \
+    && useradd redis -G microservices \
+    && apt-key adv --keyserver {{ url.redis.debian.keyserver }} --recv-keys {{ url.redis.debian.keys }} \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y -t jessie-backports redis-server \
+    && apt-get clean
+
+USER redis
