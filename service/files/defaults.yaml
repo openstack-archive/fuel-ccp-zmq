@@ -1,0 +1,24 @@
+configs:
+  messaging:
+    dependencies:
+      zmq: zmq-proxy
+  zmq:
+    matchmaker: redis
+    proxy:
+      ports:
+        frontend:
+          cont: 50001
+        backend:
+          cont: 50002
+        publisher:
+          cont: 50003
+  redis:
+    deployment: single
+    ports:
+      server:
+        cont: 6379
+    password: password
+versions:
+  redis_version: 3.2.3
+url:
+  redis: http://download.redis.io/releases
