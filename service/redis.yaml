@@ -1,0 +1,29 @@
+dsl_version: 0.2.0
+service:
+  name: redis
+  antiAffinity: local
+  ports:
+    - {{ redis.ports.server }}
+  containers:
+    - name: redis
+      image: redis
+      pre:
+        - name: chown-logs-dir
+          command: "sudo /bin/chown -R redis: /var/lib/redis /var/log/ccp/redis"
+      daemon:
+        files:
+          - redis-conf
+        command: redis-server /etc/redis/redis.conf
+      volumes:
+        - name: redis-logs
+          path: "/var/log/ccp/redis"
+          type: host
+          readOnly: False
+        - name: redis-data
+          path: "/var/lib/redis"
+          type: host
+          readOnly: False
+files:
+  redis-conf:
+    path: /etc/redis/redis.conf
+    content: redis.conf.j2
