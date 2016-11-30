@@ -1,0 +1,31 @@
+dsl_version: 0.1.0
+service:
+  kind: DaemonSet
+  name: zmq-proxy
+  ports:
+    - {{ zmq.proxy.ports.frontend }}
+    - {{ zmq.proxy.ports.backend }}
+    - {{ zmq.proxy.ports.publisher }}
+  containers:
+    - name: zmq-proxy
+      image: openstack-base
+      probes:
+        readiness: "true"
+        liveness:
+          command: "true"
+          type: "exec"
+      daemon:
+        files:
+          - zmq-conf
+        command: oslo-messaging-zmq-proxy --config-file /etc/oslo/zmq-proxy.conf
+        dependencies:
+          - {{ zmq.matchmaker }}
+      volumes:
+        - name: zmq-logs
+          path: "/var/log/ccp/zmq"
+          type: host
+          readOnly: False
+files:
+  zmq-conf:
+    path: /etc/oslo/zmq-proxy.conf
+    content: zmq-proxy.conf.j2
