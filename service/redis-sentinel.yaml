@@ -1,0 +1,30 @@
+dsl_version: 0.1.0
+service:
+  name: redis-sentinel
+  kind: DaemonSet
+  ports:
+    - {{ redis.ports.sentinel }}
+  containers:
+    - name: redis-sentinel
+      image: redis
+      probes:
+        readiness: "true"
+        liveness:
+          command: 'true'
+          type: 'exec'
+      daemon:
+        files:
+          - sentinel-conf
+        command: redis-server /etc/redis/sentinel.conf --sentinel
+        dependencies:
+          - redis
+          - redis-slave
+      volumes:
+      - name: redis-logs
+        path: "/var/log/ccp/redis"
+        type: host
+        readOnly: False
+files:
+  sentinel-conf:
+    path: /etc/redis/sentinel.conf
+    content: sentinel.conf.j2
