@@ -1,0 +1,10 @@
+port {{ redis.ports.sentinel.cont }}
+logfile "/var/log/ccp/redis/sentinel.log"
+protected-mode no
+
+# master definiton
+sentinel monitor {{ zmq.sentinel.master_group }} {{ address('redis') }} {{ redis.ports.server.cont }} {{ redis.quorum }}
+# sentinel auth-pass master {{ redis.password }}
+sentinel down-after-milliseconds  {{ zmq.sentinel.master_group }} 60000
+sentinel failover-timeout  {{ zmq.sentinel.master_group }} 180000
+sentinel parallel-syncs {{ zmq.sentinel.master_group }} 1
