@@ -1,0 +1,13 @@
+FROM {{ image_spec("base-tools") }}
+MAINTAINER {{ maintainer }}
+
+RUN apt-get update && src=redis-{{ redis_version }} && \
+    apt-get install  --no-install-recommends -y  build-essential make gcc && \
+    curl -L http://download.redis.io/releases/$src.tar.gz -o $src.tar.gz && \
+    tar xzf $src.tar.gz && \
+    cd ./$src && make && \
+    cp -f src/redis-server /usr/local/bin  && \
+    cp -f src/redis-cli /usr/local/bin && \
+    apt-get remove -y --purge build-essential make gcc \
+    cd ../ && rm -f $src.tar.gz && rm -rf $src && \
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
