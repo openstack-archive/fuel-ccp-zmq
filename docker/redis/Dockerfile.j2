@@ -1,0 +1,20 @@
+FROM {{ image_spec("base-tools") }}
+MAINTAINER {{ maintainer }}
+
+VOLUME ["/var/lib/redis", "/etc/redis/", "/var/log/ccp/redis"]
+
+RUN useradd redis && \
+    chown -R redis: /var/lib/redis /etc/redis/ /var/log/ccp/redis && \
+    apt-get update && apt-get install --no-install-recommends -y build-essential make gcc curl && \
+
+    src=redis-{{ redis_version }} && \
+    curl -L http://download.redis.io/releases/$src.tar.gz -o $src.tar.gz && \
+    tar xzf $src.tar.gz && chown -R redis: ./$src && \
+    su -c "make -C ./$src" redis && make install -C ./$src && \
+
+    usermod -s /bin/false redis && \
+    apt-get remove -y --purge build-essential make gcc && \
+    rm -f $src.tar.gz && rm -rf $src && \
+    rm -rf /var/lib/{apt,dpkg,cache,log}/
+
+USER redis
