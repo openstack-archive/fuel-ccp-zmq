@@ -1,0 +1,2 @@
+%microservices ALL=(root) NOPASSWD: /bin/chown -R redis\: /var/lib/redis /var/log/ccp/redis
+%microservices ALL=(root) NOPASSWD: /bin/chown -R redis\: /var/log/ccp/redis

@@ -1,0 +1,19 @@
+[zmq_proxy_opts]
+host={{ network_topology["private"]["address"] }}
+frontend-port={{ zmq.proxy.ports.frontend.cont }}
+backend-port={{ zmq.proxy.ports.backend.cont }}
+publisher-port={{ zmq.proxy.ports.publisher.cont }}
+
+{% if zmq.matchmaker == 'redis' %}
+[oslo_messaging_zmq]
+rpc_zmq_matchmaker=redis
+
+[matchmaker_redis]
+password={{ redis.password }}
+
+{% if redis.deployment == 'single' %}
+host={{ address('redis') }}
+port={{ redis.ports.server.cont }}
+{% endif %}
+
+{% endif %}
