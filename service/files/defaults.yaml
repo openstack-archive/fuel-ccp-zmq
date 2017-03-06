@@ -17,6 +17,9 @@ configs:
     ports:
       server:
         cont: 6379
+
+secret_configs:
+  redis:
     password: password
 
 url:
